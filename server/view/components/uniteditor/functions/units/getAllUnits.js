@@ -2,7 +2,10 @@ let lastPull = new Date()
 let pulled = false 
 
 const getAllUnits = async() => {
-    let url = 'http://127.0.0.1:26068/data'
+
+    console.log('getting all units')
+    let url = 'http://localhost:26068/data'
+
     let method = 'POST'
     let headers = {
         'Content-Type': 'application/json'
@@ -23,6 +26,7 @@ const getAllUnits = async() => {
     if (now - lastPull < 10000 && pulled === true){
         if (window.allUnits){return window.allUnits} else {return []}
     } 
+
     let response = await fetch(url, options).catch(err => {
         console.error(err)
         return w2alert('Error: invalid response from schemas server')

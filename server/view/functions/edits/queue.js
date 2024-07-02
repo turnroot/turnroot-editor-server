@@ -6,7 +6,8 @@ const initQueue = () => {
 }
 
 const updateQueue = (model, method, body) => {
-    let existing = window.editsQueue.queue.find(item => item.model === model && item.method === method)
+    const id = body.id
+    let existing = window.editsQueue.queue.find(item => item.body.id === id)
     if (existing) {
         existing.body = body
     } else {

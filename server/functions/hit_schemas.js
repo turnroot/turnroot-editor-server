@@ -13,7 +13,7 @@ const establishConnection = async (req, res) => {
         req.user = {}
         req.user.userId = 'local'
     }
-    let url = process.env.LOCAL === 'false' ? process.env.SCHEMAS_SERVER_URL : 'http://127.0.0.1:9194/'
+    let url = process.env.LOCAL === 'false' ? process.env.SCHEMAS_SERVER_URL : 'http://localhost:9194/'
     let body = {
         userId: req.user.userId,
         key: process.env.SCHEMAS_SERVER_KEY,
@@ -40,6 +40,7 @@ const establishConnection = async (req, res) => {
 }
 
 const sendToFromDatabase = async (req, res) => {
+    console.log('sending to database')
     if (process.env.LOCAL === 'true'){
         req.user = {}
         req.user.userId = 'local'
@@ -51,8 +52,13 @@ const sendToFromDatabase = async (req, res) => {
     let body = {
         userId: req.user.userId,
         key: process.env.SCHEMAS_SERVER_KEY,
-        actions: req.body.queue
+        actions: req.body.queue,
     }
+    let copy = JSON.parse(JSON.stringify(req.body))
+    delete copy.user
+    delete copy.queue
+    Object.assign(body, copy)
+
     let options = {
         method: 'POST',
         headers: {

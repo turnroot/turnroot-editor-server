@@ -14,7 +14,7 @@ let toolbar = new w2toolbar({
         {type: 'label', id: 'status-bar-db-status', icon: '<div style = "margin-top:-8px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--slider-1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-server-off"><path d="M7 2h13a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-5"/><path d="M10 10 2.5 2.5C2 2 2 2.5 2 5v3a2 2 0 0 0 2 2h6z"/><path d="M22 17v-1a2 2 0 0 0-2-2h-1"/><path d="M4 14a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16.5l1-.5.5.5-8-8H4z"/><path d="M6 18h.01"/><path d="m2 2 20 20"/></svg></div>', tooltip: 'Database connection lost', },
         {type: 'label', id: 'status-bar-autosave-status', class: 'status-bar', icon: autosavedIcon,},
         {type: 'spacer'},
-        {type: 'label', id: 'status-bar-turnroot-version', class: 'status-bar', text: 'Turnroot Editor v0.0.4 Weekly'},
+        {type: 'label', id: 'status-bar-turnroot-version', class: 'status-bar', text: 'Turnroot Editor v0.0.5 Weekly'},
         {type: 'spacer'},
         {type: 'label', id: 'status-bar-report-issue', class: 'status-bar report-issue', text: 'Report an issue', style:'margin:0!important;padding:0!important;'},
     ]

@@ -362,8 +362,11 @@
   
   .w2ui-menu {
   max-height:12rem;
-  overflow-x:hidden;
-  overflow-y:auto
+  overflow-x:hidden
+  }
+
+  .w2ui-menu, .w2ui-sidebar-body{
+    overflow-y:auto
   }
   
   .resize-icon {

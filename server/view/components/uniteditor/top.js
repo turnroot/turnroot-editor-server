@@ -1,7 +1,19 @@
 import {
     w2toolbar,
-    w2ui
+    w2prompt,
+    w2alert,
+    w2confirm
 } from '../../lib/w2ui.es6.min.js'
+
+import createNewUnit from './functions/units/createNewUnit.js'
+import deleteUnit from './functions/units/deleteUnit.js'
+import getAllUnits from './functions/units/getAllUnits.js'
+window.UnitEditorCreateNewUnit = createNewUnit
+window.UnitEditorDeleteUnit = deleteUnit
+
+import updateCurrentUnitRecord from './functions/utils/updateCurrentUnitRecord.js'
+
+let nodes = []
 
 let toolbar = new w2toolbar({
     name: 'UnitEditorTopMenu',
@@ -28,11 +40,76 @@ let toolbar = new w2toolbar({
     ]
 })
 
-toolbar.on('click', function (event) {
-    event.done(() => {
+toolbar.on('click', function async(event) {
+    event.done(async() => {
         window.turnrootEditorLogs.push(`${new Date()}||info||Unit toolbar button clicked: ${JSON.stringify(event.target)}`)
         if (event.detail.item.id === 'new-unit') {
-            window.UnitEditorCreateNewUnit()
+            w2prompt({
+                title: 'Create new unit',
+                label: window.allUnits.length === 0 ?'Enter the familiar name for your first unit. This unit will be the "avatar", or customizable player character. The player will be allowed to change this name if they want- this is just a default.' : 'Enter the familiar name of the new unit',
+            }).ok(async(event) => {
+                
+                if (event.detail.value === ''){
+                    event.preventDefault()
+                } else {
+                    window.allUnits = await getAllUnits()
+                    let subtype = 'avatar'
+                    if (window.allUnits.length > 0){
+                        subtype = 'enemy'
+                    }
+                    await window.UnitEditorCreateNewUnit(subtype, event.detail.value).then(n => {
+                        window.UnitEditor.html('main', window.unitEditorBasicFields)
+                        window.allUnits.push(n)
+                        window.currentUnit = n
+                        
+                        updateCurrentUnitRecord(n)
+
+                        window.allUnits.forEach(unit => {
+                            nodes.push({id:  unit.id, text: unit.name + ' ' + unit.id})
+                        })
+                        nodes.forEach(node => {
+                            if (node.id === n.id){
+                                node.selected = true
+                            }
+                        })
+                        window.allUnitsNodes = nodes
+                        window.UnitEditorLeftSidebar.remove()
+                        window.UnitEditorLeftSidebar.nodes = window.allUnitsNodes
+                        window.UnitEditor.refresh()
+                        window.UnitEditorLeftSidebar.refresh()
+                        
+                        return w2alert('New unit created')
+                    }).catch(e => {
+                        console.error(e)
+                    })
+                }
+            })
+        }
+        else if (event.detail.item.id === 'delete-unit'){
+            if (window.allUnits.length === 0){
+                return w2alert('No units to delete')
+            }
+            let unit = window.currentUnit
+            w2confirm({
+                title: 'Delete unit',
+                body: `Are you sure you want to delete ${unit.name}?`,
+                width: 300,
+                height:200,
+            }).yes(async() => {
+                updateCurrentUnitRecord(window.currentUnit)
+                await window.UnitEditorDeleteUnit(unit.id).then(() => {
+                    let index = window.allUnits.findIndex(u => u.id === unit.id)
+                    window.allUnits.splice(index, 1)
+                    window.UnitEditorLeftSidebar.remove()
+                    window.UnitEditorLeftSidebar.nodes = window.allUnits.map(unit => ({id: unit.id, text: unit.name + ' ' + unit.id}))
+                    window.UnitEditorLeftSidebar.refresh()
+                    window.currentUnit = window.allUnits[0]
+                    window.UnitEditor.html('main', window.unitEditorBasicFields)
+                    return w2alert('Unit deleted')
+                }).catch(e => {
+                    return w2alert('Error deleting unit')
+                })
+            })
         }
     })
 
